@@ -17,7 +17,8 @@ import pymongo
 password = os.environ["MONGOPW"]
 mongo_uri = "mongodb://johncoogan:%s@lighthouse.1.mongolayer.com:10243,lighthouse.0.mongolayer.com:10243/testing" % password
 connect = pymongo.Connection(mongo_uri)
-mongo = connect.sleeplog
+mongo = connect.testing
+sleeplog = mongo.sleeplog
 
 
 
@@ -27,4 +28,4 @@ results = {'datetime': local_date, 'datestr': local_str, 'force': float(sys.argv
 
 # target.inject({local_str:results})
 
-mongo.save(results)
+sleeplog.save(results)
