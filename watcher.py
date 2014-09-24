@@ -34,6 +34,8 @@ oldaxes = dict(axes)
 
 start_time = time.time()
 results = {'force': 0, 'bumps': 0}
+subprocess.Popen(["sudo -E python /home/pi/toaster/adxl345-python/logger.py",str(results['force']),str(results['bumps'])])
+
 # target = sheetsync.Sheet(username="coogan.johna@gmail.com", password=pw, document_name="SleepLog")
 # target.inject({datetime.now():results})
 
@@ -49,14 +51,13 @@ while True:
     if diff_time >= 60.0:
         print datetime.now()
         start_time = time.time()
-        result_log = dict(results)
-        subprocess.Popen(["sudo -E python /home/pi/toaster/adxl345-python/logger.py",str(result_log['force']),str(result_log['bumps'])])
+        subprocess.Popen(["sudo -E python /home/pi/toaster/adxl345-python/logger.py",str(results['force']),str(results['bumps'])])
         # log_results(result_log)
         results = {'force': 0, 'bumps': 0}
     axes = adxl345.getAxes(True)
     deltas = {k:abs(v - oldaxes[k]) for k,v in axes.items()}
     total_force = sum(deltas.values())
     results['force'] += total_force
-    if total_force > 0.25:
+    if total_force > 0.1:
         results['bumps'] += 1
     oldaxes = dict(axes)
