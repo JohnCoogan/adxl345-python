@@ -47,7 +47,7 @@ while True:
     deltas = {k:abs(v - oldaxes[k]) for k,v in axes.items()}
     total_force = sum(deltas.values())
     results['force'] += total_force
-    if total_force > 0.05:
+    if total_force > 0.1:
         results['bumpforce'] += total_force
         results['bumps'] += 1
     oldaxes = dict(axes)
