@@ -14,7 +14,7 @@ password = os.environ["GSHEETS"]
 username = "coogan.johna@gmail.com"
 
 import pymongo
-password = os.environ["GSHEETS"]
+password = os.environ["MONGOPW"]
 mongo_uri = "mongodb://johncoogan:%s@lighthouse.1.mongolayer.com:10243,lighthouse.0.mongolayer.com:10243/testing" % password
 connect = pymongo.Connection(mongo_uri)
 mongo = connect.sleeplog
