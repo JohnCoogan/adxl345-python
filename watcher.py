@@ -23,6 +23,6 @@ while True:
     axes = adxl345.getAxes(True)
     deltas = {k:abs(v - oldaxes[k]) for k,v in axes.items()}
     total_force = sum(deltas.values())
-    if total_force > 0.1:
+    if total_force > 0.5:
         print "Felt a bump in the night"
     oldaxes = dict(axes)
