@@ -33,9 +33,7 @@ oldaxes = dict(axes)
 
 start_time = time.time()
 
-results = {'force': 0, 'bumps': 0}
-
-# subprocess.Popen(["sudo", "-E", "python", "/home/pi/toaster/adxl345-python/logger.py", str(results['force']), str(results['bumps'])])
+results = {'force': 0, 'bumps': 0, 'bumpforce': 0}
 
 
 while True:
@@ -43,13 +41,13 @@ while True:
     if diff_time >= 60.0:
         print datetime.now()
         start_time = time.time()
-        subprocess.Popen(["sudo", "-E", "python", "/home/pi/toaster/adxl345-python/logger.py", str(results['force']), str(results['bumps'])])
-        results = {'force': 0, 'bumps': 0}
+        subprocess.Popen(["sudo", "-E", "python", "/home/pi/toaster/adxl345-python/logger.py", str(results['force']), str(results['bumps']), str(results['bumpforce'])])
+        results = {'force': 0, 'bumps': 0, 'bumpforce': 0}
     axes = adxl345.getAxes(True)
     deltas = {k:abs(v - oldaxes[k]) for k,v in axes.items()}
     total_force = sum(deltas.values())
     results['force'] += total_force
-    print total_force
-    if total_force > 0.1:
+    if total_force > 0.05:
+        results['bumpforce'] += total_force
         results['bumps'] += 1
     oldaxes = dict(axes)
