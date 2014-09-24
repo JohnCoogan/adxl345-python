@@ -9,14 +9,17 @@
 
 from adxl345 import ADXL345
 import time
+from datetime import datetime
 import os
 import sys
+import sheetsync
 
 try:  
-   os.environ["GSHEETS"]
+    pw = os.environ["GSHEETS"]
 except KeyError: 
-   print "Please set the environment variable GSHEETS"
-   sys.exit(1)
+    print "Please set the environment variable GSHEETS"
+    sys.exit(1)
+
 
 adxl345 = ADXL345()
 
@@ -29,13 +32,14 @@ print "   z = %.3fG" % ( axes['z'] )
 oldaxes = dict(axes)
 
 start_time = time.time()
-minute_force = 0
-minute_bumps = 0
+results = {'force': 0, 'bumps': 0}
+target = sheetsync.Sheet(username="coogan.johna@gmail.com", password=pw, document_name="SleepLog")
 
 
-def log_results(minute_force, minute_bumps):
-    print "Total Force this minute: %.3fG" % minute_force
-    print "Total Bumps this minute: %.3fG" % minute_bumps
+def log_results(results):
+    target.inject({datetime.now():results})
+    print "Total Force this minute: %.3fG" % results['force']
+    print "Total Bumps this minute: %i" % results['bumps']
     return
 
 
@@ -43,13 +47,12 @@ while True:
     diff_time = time.time() - start_time
     if diff_time >= 60.0:
         start_time = time.time()
-        log_results(minute_force, minute_bumps)
-        minute_force = 0
-        minute_bumps = 0
+        log_results(results)
+        results = {'force': 0, 'bumps': 0}
     axes = adxl345.getAxes(True)
     deltas = {k:abs(v - oldaxes[k]) for k,v in axes.items()}
     total_force = sum(deltas.values())
-    minute_force += total_force
+    results['force'] += total_force
     if total_force > 0.25:
-        minute_bumps += 1
+        results['bumps'] += 1
     oldaxes = dict(axes)
