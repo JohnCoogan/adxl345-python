@@ -9,6 +9,13 @@
 
 from adxl345 import ADXL345
 import time
+import os
+
+try:  
+   os.environ["GSHEETS"]
+except KeyError: 
+   print "Please set the environment variable GSHEETS"
+   sys.exit(1)
 
 adxl345 = ADXL345()
 
@@ -22,27 +29,26 @@ oldaxes = dict(axes)
 
 start_time = time.time()
 minute_force = 0
+minute_bumps = 0
 
 
-def log_results(minute_force):
+def log_results(minute_force, minute_bumps):
     print "Total Force this minute: %.3fG" % minute_force
+    print "Total Bumps this minute: %.3fG" % minute_bumps
     return
 
 
 while True:
     diff_time = time.time() - start_time
-    if diff_time > 59.0:
+    if diff_time >= 60.0:
         start_time = time.time()
-        log_results(minute_force)
+        log_results(minute_force, minute_bumps)
         minute_force = 0
+        minute_bumps = 0
     axes = adxl345.getAxes(True)
     deltas = {k:abs(v - oldaxes[k]) for k,v in axes.items()}
     total_force = sum(deltas.values())
-<<<<<<< HEAD
-    if total_force > 0.5:
-=======
     minute_force += total_force
-    if total_force > 0.1:
->>>>>>> bd44bf7270a4ddc58ddf09d88ae6b63c292988ac
-        print "Felt a bump in the night"
+    if total_force > 0.25:
+        minute_bumps += 1
     oldaxes = dict(axes)
