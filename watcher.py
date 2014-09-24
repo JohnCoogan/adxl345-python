@@ -12,13 +12,12 @@ import time
 from datetime import datetime
 import os
 import sys
-import sheetsync
 import subprocess
 
 try:  
-    pw = os.environ["GSHEETS"]
+    os.environ["MONGOPW"]
 except KeyError: 
-    print "Please set the environment variable GSHEETS"
+    print "Please set the environment variable MONGOPW"
     sys.exit(1)
 
 
@@ -33,18 +32,10 @@ print "   z = %.3fG" % ( axes['z'] )
 oldaxes = dict(axes)
 
 start_time = time.time()
+
 results = {'force': 0, 'bumps': 0}
 
-subprocess.Popen(["sudo", "-E", "python", "/home/pi/toaster/adxl345-python/logger.py", str(results['force']), str(results['bumps'])])
-
-# target = sheetsync.Sheet(username="coogan.johna@gmail.com", password=pw, document_name="SleepLog")
-# target.inject({datetime.now():results})
-
-# def log_results(result_log):
-#     target.inject({datetime.now():result_log})
-#     print "Total Force this minute: %.3fG" % result_log['force']
-#     print "Total Bumps this minute: %i" % result_log['bumps']
-#     return
+# subprocess.Popen(["sudo", "-E", "python", "/home/pi/toaster/adxl345-python/logger.py", str(results['force']), str(results['bumps'])])
 
 
 while True:
@@ -52,13 +43,13 @@ while True:
     if diff_time >= 60.0:
         print datetime.now()
         start_time = time.time()
-        subprocess.Popen(["sudo -E python /home/pi/toaster/adxl345-python/logger.py",str(results['force']),str(results['bumps'])])
-        # log_results(result_log)
+        subprocess.Popen(["sudo", "-E", "python", "/home/pi/toaster/adxl345-python/logger.py", str(results['force']), str(results['bumps'])])
         results = {'force': 0, 'bumps': 0}
     axes = adxl345.getAxes(True)
     deltas = {k:abs(v - oldaxes[k]) for k,v in axes.items()}
     total_force = sum(deltas.values())
     results['force'] += total_force
+    print total_force
     if total_force > 0.1:
         results['bumps'] += 1
     oldaxes = dict(axes)
