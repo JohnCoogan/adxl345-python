@@ -36,10 +36,10 @@ results = {'force': 0, 'bumps': 0}
 target = sheetsync.Sheet(username="coogan.johna@gmail.com", password=pw, document_name="SleepLog")
 
 
-def log_results(results):
-    # target.inject({datetime.now():results})
-    print "Total Force this minute: %.3fG" % results['force']
-    print "Total Bumps this minute: %i" % results['bumps']
+def log_results(result_log):
+    # target.inject({datetime.now():result_log})
+    print "Total Force this minute: %.3fG" % result_log['force']
+    print "Total Bumps this minute: %i" % result_log['bumps']
     return
 
 
@@ -48,7 +48,8 @@ while True:
     if diff_time >= 60.0:
         print datetime.now()
         start_time = time.time()
-        log_results(results)
+        result_log = dict(results)
+        log_results(result_log)
         results = {'force': 0, 'bumps': 0}
     axes = adxl345.getAxes(True)
     deltas = {k:abs(v - oldaxes[k]) for k,v in axes.items()}
