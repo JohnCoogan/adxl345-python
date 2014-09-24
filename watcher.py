@@ -13,7 +13,7 @@ from datetime import datetime
 import os
 import sys
 import sheetsync
-import multiprocessing
+import threading
 
 try:  
     pw = os.environ["GSHEETS"]
@@ -50,7 +50,7 @@ while True:
         print datetime.now()
         start_time = time.time()
         result_log = dict(results)
-        multiprocessing.Process(target=log_results, args=(result_log,)).start()
+        threading.Thread(target=log_results, args=(result_log,)).start()
         log_results(result_log)
         results = {'force': 0, 'bumps': 0}
     axes = adxl345.getAxes(True)
