@@ -13,6 +13,7 @@ from datetime import datetime
 import os
 import sys
 import sheetsync
+import multiprocessing
 
 try:  
     pw = os.environ["GSHEETS"]
@@ -37,7 +38,7 @@ target = sheetsync.Sheet(username="coogan.johna@gmail.com", password=pw, documen
 
 
 def log_results(result_log):
-    # target.inject({datetime.now():result_log})
+    target.inject({datetime.now():result_log})
     print "Total Force this minute: %.3fG" % result_log['force']
     print "Total Bumps this minute: %i" % result_log['bumps']
     return
@@ -49,6 +50,7 @@ while True:
         print datetime.now()
         start_time = time.time()
         result_log = dict(results)
+        multiprocessing.Process(target=log_results, args=(result_log,)).start()
         log_results(result_log)
         results = {'force': 0, 'bumps': 0}
     axes = adxl345.getAxes(True)
