@@ -10,6 +10,7 @@
 from adxl345 import ADXL345
 import time
 import os
+import sys
 
 try:  
    os.environ["GSHEETS"]
