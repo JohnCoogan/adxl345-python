@@ -8,9 +8,10 @@
 # http://shop.pimoroni.com/products/adafruit-triple-axis-accelerometer
 
 from adxl345 import ADXL345
-  
+import time
+
 adxl345 = ADXL345()
-    
+
 axes = adxl345.getAxes(True)
 print "ADXL345 on address 0x%x:" % (adxl345.address)
 print "   x = %.3fG" % ( axes['x'] )
@@ -19,10 +20,29 @@ print "   z = %.3fG" % ( axes['z'] )
 
 oldaxes = dict(axes)
 
+start_time = time.time()
+minute_force = 0
+
+
+def log_results(minute_force):
+    print "Total Force this minute: %.3fG" % minute_force
+    return
+
+
 while True:
+    diff_time = time.time() - start_time
+    if diff_time > 59.0:
+        start_time = time.time()
+        log_results(minute_force)
+        minute_force = 0
     axes = adxl345.getAxes(True)
     deltas = {k:abs(v - oldaxes[k]) for k,v in axes.items()}
     total_force = sum(deltas.values())
+<<<<<<< HEAD
     if total_force > 0.5:
+=======
+    minute_force += total_force
+    if total_force > 0.1:
+>>>>>>> bd44bf7270a4ddc58ddf09d88ae6b63c292988ac
         print "Felt a bump in the night"
     oldaxes = dict(axes)
