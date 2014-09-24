@@ -34,7 +34,8 @@ oldaxes = dict(axes)
 
 start_time = time.time()
 results = {'force': 0, 'bumps': 0}
-subprocess.Popen(["sudo -E python /home/pi/toaster/adxl345-python/logger.py",str(results['force']),str(results['bumps'])])
+
+subprocess.Popen(["sudo", "-E", "python", "/home/pi/toaster/adxl345-python/logger.py", str(results['force']), str(results['bumps'])])
 
 # target = sheetsync.Sheet(username="coogan.johna@gmail.com", password=pw, document_name="SleepLog")
 # target.inject({datetime.now():results})
