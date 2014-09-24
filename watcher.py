@@ -21,22 +21,23 @@ except KeyError:
     sys.exit(1)
 
 
-adxl345 = ADXL345()
-
-axes = adxl345.getAxes(True)
-print "ADXL345 on address 0x%x:" % (adxl345.address)
-print "   x = %.3fG" % ( axes['x'] )
-print "   y = %.3fG" % ( axes['y'] )
-print "   z = %.3fG" % ( axes['z'] )
-
-oldaxes = dict(axes)
-
-start_time = time.time()
-
-results = {'force': 0, 'bumps': 0, 'bumpforce': 0}
-
-
 def main_loop():
+    adxl345 = ADXL345()
+
+    axes = adxl345.getAxes(True)
+    print "ADXL345 on address 0x%x:" % (adxl345.address)
+    print "   x = %.3fG" % ( axes['x'] )
+    print "   y = %.3fG" % ( axes['y'] )
+    print "   z = %.3fG" % ( axes['z'] )
+
+    oldaxes = dict(axes)
+
+    start_time = time.time()
+
+    results = {'force': 0, 'bumps': 0, 'bumpforce': 0}
+
+    subprocess.Popen(["sudo", "-E", "python", "/home/pi/toaster/adxl345-python/startup.py"])
+
     while True:
         diff_time = time.time() - start_time
         if diff_time >= 60.0:
