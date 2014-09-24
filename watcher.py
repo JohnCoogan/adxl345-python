@@ -37,7 +37,7 @@ target = sheetsync.Sheet(username="coogan.johna@gmail.com", password=pw, documen
 
 
 def log_results(results):
-    target.inject({datetime.now():results})
+    # target.inject({datetime.now():results})
     print "Total Force this minute: %.3fG" % results['force']
     print "Total Bumps this minute: %i" % results['bumps']
     return
@@ -46,6 +46,7 @@ def log_results(results):
 while True:
     diff_time = time.time() - start_time
     if diff_time >= 60.0:
+        print datetime.now()
         start_time = time.time()
         log_results(results)
         results = {'force': 0, 'bumps': 0}
